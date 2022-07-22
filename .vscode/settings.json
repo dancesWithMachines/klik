@@ -1,0 +1,6 @@
+
+{
+	"cmake.configureArgs": [
+        "-DPICO_BOARD=pico_w"
+    ],
+}
