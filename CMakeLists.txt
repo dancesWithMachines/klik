@@ -1,5 +1,3 @@
-# Generated Cmake Pico project file
-
 cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
@@ -17,9 +15,11 @@ project(klik C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Add executable. Default name is the project name, version 0.1
+# Add local files
+aux_source_directory(. PROJECT_SOURCES)
 
-add_executable(klik klik.c )
+# Add executable. Default name is the project name, version 0.1
+add_executable(klik klik.c ${PROJECT_SOURCES})
 
 pico_set_program_name(klik "klik")
 pico_set_program_version(klik "0.1")
@@ -30,5 +30,11 @@ pico_enable_stdio_usb(klik 1)
 # Add the standard library to the build
 target_link_libraries(klik pico_stdlib)
 
-pico_add_extra_outputs(klik)
+add_custom_command(
+    TARGET klik POST_BUILD
+    COMMAND bash "-c" ./upload.sh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Upload binary to pi pico if connected"
+    )
 
+pico_add_extra_outputs(klik)
