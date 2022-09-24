@@ -3,4 +3,6 @@
 	"cmake.configureArgs": [
         "-DPICO_BOARD=pico_w"
     ],
+    "cortex-debug.openocdPath": "/Users/timax/Development/pi_pico/openocd/src/openocd",
+    "editor.formatOnSave": true
 }
