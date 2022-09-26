@@ -25,7 +25,7 @@ pico_set_program_name(klik "klik")
 pico_set_program_version(klik "0.1")
 
 pico_enable_stdio_uart(klik 1)
-pico_enable_stdio_usb(klik 1)
+pico_enable_stdio_usb(klik 0)
 
 # Add the standard library to the build
 target_link_libraries(klik pico_stdlib hardware_pwm)
