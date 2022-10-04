@@ -1,0 +1,7 @@
+Improvements:
+    * Replace some of the "Init" functions with "Setup"
+    * Add SERVO_ prefix to lacking defines in servo.c
+    * Add dynamic recount for content length in request
+
+Ideas:
+    * Add config args to cmake, similar to how it's done in pico-examples (for pico w)
