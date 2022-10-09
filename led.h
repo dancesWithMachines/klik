@@ -20,6 +20,7 @@ typedef enum
 
 void ledDiodeInit(ledDiode_t *diode);
 void ledDiodeSetup(ledDiode_t *diode, uint8_t bluePin, uint8_t greenPin, uint8_t redPin);
+void ledDiodeDim(ledDiode_t *diode);
 void ledCycle(ledDiode_t *diode, struct repeating_timer *timer, uint delay, color_t color1, color_t color2);
 void ledBlink(ledDiode_t *diode, struct repeating_timer *timer, color_t color, uint delay);
 void ledTest();

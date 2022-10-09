@@ -113,6 +113,18 @@ void ledDiodeSetup(ledDiode_t *diode, uint8_t bluePin, uint8_t greenPin, uint8_t
 }
 
 /**
+ * @brief Switches led diode off.
+ *
+ * @param diode diode.
+ */
+void ledDiodeDim(ledDiode_t *diode)
+{
+    gpio_put(diode->bluePin, 0);
+    gpio_put(diode->greenPin, 0);
+    gpio_put(diode->redPin, 0);
+}
+
+/**
  * @brief Cycles diode colors by specified time.
  * Function is non blocking, colors cycle independent from code.
  *
