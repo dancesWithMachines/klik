@@ -35,7 +35,7 @@ pico_enable_stdio_uart(klik 1)
 pico_enable_stdio_usb(klik 0)
 
 # Add the standard library to the build
-target_link_libraries(klik pico_stdlib hardware_pwm pico_cyw43_arch_lwip_poll pico_lwip_mbedtls pico_mbedtls)
+target_link_libraries(klik pico_stdlib hardware_pwm hardware_flash hardware_sync pico_cyw43_arch_lwip_poll pico_lwip_mbedtls pico_mbedtls)
 
 add_custom_command(
     TARGET klik POST_BUILD

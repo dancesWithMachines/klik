@@ -19,7 +19,7 @@ void serialInit()
 {
     uart_init(SERIAL_UART_ID, SERIAL_BAUD_RATE);
     uart_set_format(SERIAL_UART_ID, SERIAL_DATA_BITS, SERIAL_STOP_BITS, SERIAL_PARITY);
-    uart_set_fifo_enabled(SERIAL_UART_ID, false);
+    uart_set_fifo_enabled(SERIAL_UART_ID, true);
     uart_set_hw_flow(SERIAL_UART_ID, false, false);
 }
 
@@ -58,6 +58,7 @@ char *serialGetLastLine()
 
 /**
  * @brief Prints text to serial.
+ * This differs from printf, that it checks if uart is writable.
  *
  * @param line      text to print.
  * @return true     printing succeeded.
@@ -67,7 +68,7 @@ bool serialSendLine(char *line)
 {
     if (uart_is_writable(SERIAL_UART_ID))
     {
-        printf("\n%s\n", line);
+        printf("%s\n", line);
         return true;
     }
     return false;

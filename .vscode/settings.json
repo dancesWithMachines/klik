@@ -6,6 +6,8 @@
     "cortex-debug.openocdPath": "/Users/timax/Development/pi_pico/openocd/src/openocd",
     "editor.formatOnSave": true,
     "files.associations": {
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "serial.h": "c",
+        "dictionary.h": "c"
     }
 }
