@@ -14,6 +14,12 @@
                                      REQUEST_API_KEY_LEN +       \
                                      REQUEST_API_FORM_ALONE_LEN
 
+typedef enum
+{
+    REQUEST_GET,
+    REQUEST_POST
+} requestType_t;
+
 bool requestSetup(char *ssid, char *password);
 char *requestPrepareGET(char *apiUsername, char *apiFeedName, char *apiKey);
 char *requestPreparePOST(uint8_t value, char *apiUsername, char *apiFeedName, char *apiKey);

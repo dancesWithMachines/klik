@@ -27,12 +27,6 @@ static TLS_CLIENT_T *g_client;
  */
 static char g_request[REQUEST_API_FORM_MAX_LEN + 1];
 
-typedef enum
-{
-    REQUEST_GET,
-    REQUEST_POST
-} requestType_t;
-
 /**
  * @brief Prepares http request string for Adafruit IO HTTP API.
  *
