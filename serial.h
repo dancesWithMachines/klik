@@ -6,5 +6,6 @@
 void serialInit();
 char *serialGetLastLine();
 bool serialSendLine(char *line);
+void serialSetInterruptHandler(void *handlerFunction);
 
 #endif
