@@ -1,3 +1,11 @@
+Before release:
+    * Add license
+    * Add manual
+    * Add necessary license files
+    * Add readme
+    * Correct versioning in CMakeLists.txt
+    * Move repo from local to github
+
 Improvements:
     * Replace some of the "Init" functions with "Setup"
     * Add SERVO_ prefix to lacking defines in servo.c

@@ -40,9 +40,13 @@ static char g_request[REQUEST_API_FORM_MAX_LEN + 1];
  */
 char *prepareRequest(requestType_t type, char *apiUsername, char *apiFeedName, char *apiKey, uint8_t value)
 {
-    char typeString[5];
-    char valueString[16];
-    char connectionLengthString[21]; // Value can be single digit only, added to TODO
+    static char typeString[5];
+    static char valueString[16];
+    static char connectionLengthString[21]; // Value can be single digit only, added to TODO
+
+    memset(typeString, 0, sizeof typeString);
+    memset(valueString, 0, sizeof valueString);
+    memset(connectionLengthString, 0, sizeof connectionLengthString);
 
     switch (type)
     {

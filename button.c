@@ -22,5 +22,5 @@ void buttonSet(uint8_t buttonPin)
  */
 bool buttonReadState(uint8_t buttonPin)
 {
-    return !gpio_get(buttonPin);
+    return gpio_get(buttonPin);
 }

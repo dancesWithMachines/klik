@@ -17,6 +17,7 @@
  */
 void servoInit(uint8_t servoPin)
 {
+    gpio_set_function(servoPin, GPIO_FUNC_PWM);
     uint slice = pwm_gpio_to_slice_num(servoPin);
 
     pwm_set_wrap(slice, WRAP);
@@ -55,5 +56,5 @@ void servoMoveUp(uint8_t servoPin)
  */
 void servoMoveDown(uint8_t servoPin)
 {
-    servoMoveToAngle(servoPin, 180);
+    servoMoveToAngle(servoPin, 179);
 }
