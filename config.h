@@ -17,7 +17,7 @@
 
 typedef struct
 {
-    bool oneTimeSetupDone;
+    bool firstTimeSetup;
     char ssid[REQUEST_NET_SSID_LEN + 1];
     char password[REQUEST_NET_PASS_LEN + 1];
     char username[REQUEST_API_USERNAME_LEN + 1];

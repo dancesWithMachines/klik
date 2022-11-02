@@ -162,7 +162,7 @@ void configSave(config_t *config)
 }
 
 /**
- * @brief Checks and saves default configuration to flash if oneTimeSetupDone is not set.
+ * @brief Checks and saves default configuration to flash if firstTimeSetup is not set.
  *
  * @param force  forces restoring configuration to defaults.
  * @return true  defaults have been restored.
@@ -173,12 +173,15 @@ bool configApplyDefaults(bool force)
     config_t config;
     configLoad(&config);
 
-    /*
-     * From what I see, the whole memory is zeroed,
-     * so thats why there is no (bool) like firstTimeSetup.
-     */
-    if (config.oneTimeSetupDone && !force)
+    if (!config.firstTimeSetup && !force)
         return false;
+
+    memset(config.ssid, 0, sizeof config.ssid);
+    memset(config.password, 0, sizeof config.password);
+    memset(config.username, 0, sizeof config.username);
+    memset(config.feedName, 0, sizeof config.feedName);
+    memset(config.apiKey, 0, sizeof config.apiKey);
+    memset(config.message, 0, sizeof config.message);
 
     strncpy(config.ssid, CONFIG_DEFAULT_SSID, sizeof CONFIG_DEFAULT_SSID);
     strncpy(config.password, CONFIG_DEFAULT_PASSWORD, sizeof CONFIG_DEFAULT_PASSWORD);
@@ -186,7 +189,7 @@ bool configApplyDefaults(bool force)
     strncpy(config.feedName, CONFIG_DEFAULT_FEEDNAME, sizeof CONFIG_DEFAULT_FEEDNAME);
     strncpy(config.apiKey, CONFIG_DEFAULT_API_KEY, sizeof CONFIG_DEFAULT_API_KEY);
     strncpy(config.message, CONFIG_DEFAULT_MESSAGE, sizeof CONFIG_DEFAULT_MESSAGE);
-    config.oneTimeSetupDone = 1;
+    config.firstTimeSetup = 0;
 
     configSave(&config);
 

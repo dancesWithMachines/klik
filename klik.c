@@ -9,13 +9,13 @@
 #include "request.h"
 #include "config.h"
 
-#define BUTTON_PIN 16
+#define BUTTON_PIN 26
 
 #define LED_BLUE 20
 #define LED_GREEN 19
 #define LED_RED 18
 
-#define SERVO_PIN 17
+#define SERVO_PIN 21
 
 #define RESPONSE_VALUE_1 "\"value\":\"1\""
 #define RESPONSE_VALUE_0 "\"value\":\"0\""
