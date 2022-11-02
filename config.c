@@ -1,8 +1,3 @@
-// jakiś struct ustawień
-// jakaś funkcja handlujaca
-// jakiś rodzaj interpretera USTAWIENIE=WARTOŚĆ starczy, to i ma i tak tylko to robić
-// jakieś ładowanie konfiguracji
-// zapisywanie konfiguracji
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
