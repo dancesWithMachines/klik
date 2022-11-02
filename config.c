@@ -5,6 +5,7 @@
 // zapisywanie konfiguracji
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/flash.h"
 #include "hardware/sync.h"
@@ -12,6 +13,7 @@
 #include "dictionary.h"
 #include "serial.h"
 #include "config.h"
+#include "servo.h"
 
 #define CONFIG_SEPARATOR 1
 #define CONFIG_MODE_LEN 3
@@ -49,6 +51,7 @@ typedef enum
     SETTING_USERNAME,
     SETTING_FEED_NAME,
     SETTING_API_KEY,
+    SETTING_ANGLE_MAX,
     SETTING_MESSAGE,
     SETTING_ALL,
     SETTING_UNDEFINED
@@ -63,6 +66,7 @@ dictionary_t settingsDictionary[] = {
     {SETTING_USERNAME, "USRN"},
     {SETTING_FEED_NAME, "FNME"},
     {SETTING_API_KEY, "APIK"},
+    {SETTING_ANGLE_MAX, "ANGL"},
     {SETTING_MESSAGE, "MESS"},
     {SETTING_ALL, "CONF"},
     {SETTING_UNDEFINED, NULL}};
@@ -189,6 +193,8 @@ bool configApplyDefaults(bool force)
     strncpy(config.feedName, CONFIG_DEFAULT_FEEDNAME, sizeof CONFIG_DEFAULT_FEEDNAME);
     strncpy(config.apiKey, CONFIG_DEFAULT_API_KEY, sizeof CONFIG_DEFAULT_API_KEY);
     strncpy(config.message, CONFIG_DEFAULT_MESSAGE, sizeof CONFIG_DEFAULT_MESSAGE);
+
+    config.angleMax = SERVO_MAX_ANGLE;
     config.firstTimeSetup = 0;
 
     configSave(&config);
@@ -226,6 +232,9 @@ void configModeGetHandler(char *string)
     case SETTING_API_KEY:
         printf("%s\n", config.apiKey);
         break;
+    case SETTING_ANGLE_MAX:
+        printf("%d\n", config.angleMax);
+        break;
     case SETTING_MESSAGE:
         printf("%s\n", config.message);
         break;
@@ -235,12 +244,14 @@ void configModeGetHandler(char *string)
                "USERNAME: %s\n"
                "FEED NAME: %s\n"
                "API_KEY: %s\n"
+               "MAX ANGLE: %d\n"
                "MESSAGE:%s\n",
                config.ssid,
                config.password,
                config.username,
                config.feedName,
                config.apiKey,
+               config.angleMax,
                config.message);
         break;
     case SETTING_UNDEFINED:
@@ -287,6 +298,11 @@ void configModeSetHandler(char *string)
     case SETTING_API_KEY:
         memset(config.apiKey, 0, sizeof config.apiKey);
         strncpy(config.apiKey, value, REQUEST_API_KEY_LEN);
+        break;
+    case SETTING_ANGLE_MAX:
+        config.angleMax = atoi(value);
+        if (config.angleMax > SERVO_MAX_ANGLE)
+            config.angleMax = SERVO_MAX_ANGLE;
         break;
     case SETTING_MESSAGE:
         memset(config.message, 0, sizeof config.message);

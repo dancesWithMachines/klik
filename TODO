@@ -8,7 +8,6 @@ Before release:
 
 Improvements:
     * Replace some of the "Init" functions with "Setup"
-    * Add SERVO_ prefix to lacking defines in servo.c
     * Add dynamic recount for content length in request
 
 Ideas:

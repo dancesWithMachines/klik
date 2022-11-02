@@ -93,14 +93,16 @@ int8_t getValueByResponse(char *response)
 /**
  * @brief Moves servo to corner positions by value.
  *
- * @param moveUp true if up, false otherwise.
+ * @param max true if to max allowed angle, false to position 0.
+ * @param maxAngle maximum angle of motion.
  */
-void moveServoByValue(bool moveUp)
+void moveServoByValue(bool max, uint8_t maxAngle)
 {
-    if (moveUp)
-        servoMoveUp(SERVO_PIN);
+    float angle = (float)maxAngle;
+    if (max)
+        servoMoveToAngle(SERVO_PIN, angle);
     else
-        servoMoveDown(SERVO_PIN);
+        servoMoveToAngle(SERVO_PIN, 0);
 }
 
 /**
@@ -120,7 +122,7 @@ int main()
     configApplyDefaults(false);
     serialInit();
     serialSetInterruptHandler(configHandler);
-    servoInit(SERVO_PIN);
+    servoSetup(SERVO_PIN);
     buttonSet(BUTTON_PIN);
     diodeSetState(KLIK_STATE_CONNECTING);
 
@@ -165,7 +167,7 @@ int main()
         if (responseStatus >= 0 && lastRequestType != REQUEST_POST)
             value = (bool)responseStatus;
 
-        moveServoByValue(value);
+        moveServoByValue(value, config.angleMax);
         sleep_ms(1000);
     }
 
