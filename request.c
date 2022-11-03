@@ -11,6 +11,10 @@
 #define REQUEST_SETUP_TIMEOUT 10000
 #define REQUEST_HOSTNAME "io.adafruit.com"
 
+#define REQUEST_PREPARE_TYPE_STRING_LEN 4
+#define REQUEST_PREPARE_VALUE_STRING_LEN 16
+#define REQUEST_PREPARE_CONNECTION_SIZE_STRING_LEN 21
+
 /*
  * I don't like defining this globally,
  * but I'd rather separate "networking" from the rest of the code.
@@ -34,15 +38,14 @@ static char g_request[REQUEST_API_FORM_MAX_LEN + 1];
  * @param apiUsername   owner's (account) username.
  * @param apiFeedName   feed name.
  * @param apiKey        api key.
- * @param value         value to be set. For now only single digit value is supported.
- *                      We'll flip between 0 and 1 anyway.
+ * @param value         value to be set.
  * @return char*        Request string.
  */
 char *prepareRequest(requestType_t type, char *apiUsername, char *apiFeedName, char *apiKey, uint8_t value)
 {
-    static char typeString[5];
-    static char valueString[16];
-    static char connectionLengthString[21]; // Value can be single digit only, added to TODO
+    static char typeString[REQUEST_PREPARE_TYPE_STRING_LEN + 1];
+    static char valueString[REQUEST_PREPARE_VALUE_STRING_LEN + 1];
+    static char connectionLengthString[REQUEST_PREPARE_CONNECTION_SIZE_STRING_LEN + 1];
 
     memset(typeString, 0, sizeof typeString);
     memset(valueString, 0, sizeof valueString);
@@ -54,9 +57,10 @@ char *prepareRequest(requestType_t type, char *apiUsername, char *apiFeedName, c
         strncpy(typeString, "GET", 3);
         break;
     case REQUEST_POST:
-        strncpy(typeString, "POST", 5);
-        strncpy(connectionLengthString, "Content-Length: 11\r\n", 20); // Value can be single digit only
-        snprintf(valueString, 14, "{\"value\":%d}\r\n", value);
+        strncpy(typeString, "POST", 4);
+        snprintf(valueString, REQUEST_PREPARE_VALUE_STRING_LEN, "{\"value\":%d}\r\n", value);
+        snprintf(connectionLengthString, REQUEST_PREPARE_CONNECTION_SIZE_STRING_LEN,
+                 "Content-Length: %d\r\n", strlen(valueString));
         break;
     }
 
