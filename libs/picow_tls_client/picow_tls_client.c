@@ -90,7 +90,7 @@ static err_t tls_client_close(void *arg)
         err = altcp_close(state->pcb);
         if (err != ERR_OK)
         {
-            printf("TLS: close failed %d, calling abort\n", err);
+            // printf("TLS: close failed %d, calling abort\n", err);
             altcp_abort(state->pcb);
             err = ERR_ABRT;
         }
@@ -104,15 +104,15 @@ static err_t tls_client_connected(void *arg, struct altcp_pcb *pcb, err_t err)
     TLS_CLIENT_T *state = (TLS_CLIENT_T *)arg;
     if (err != ERR_OK)
     {
-        printf("TLS: connect failed %d\n", err);
+        // printf("TLS: connect failed %d\n", err);
         return tls_client_close(state);
     }
 
-    printf("TLS: connected to server, sending request\n");
+    // printf("TLS: connected to server, sending request\n");
     err = altcp_write(state->pcb, state->request, strlen(state->request), TCP_WRITE_FLAG_COPY);
     if (err != ERR_OK)
     {
-        printf("TLS: error writing data, err=%d", err);
+        // printf("TLS: error writing data, err=%d", err);
         return tls_client_close(state);
     }
 
@@ -121,14 +121,14 @@ static err_t tls_client_connected(void *arg, struct altcp_pcb *pcb, err_t err)
 
 static err_t tls_client_poll(void *arg, struct altcp_pcb *pcb)
 {
-    printf("TLS: timed out");
+    // printf("TLS: timed out");
     return tls_client_close(arg);
 }
 
 static void tls_client_err(void *arg, err_t err)
 {
     TLS_CLIENT_T *state = (TLS_CLIENT_T *)arg;
-    printf("TLS: tls_client_err %d\n", err);
+    // printf("TLS: tls_client_err %d\n", err);
     state->pcb = NULL; /* pcb freed by lwip when _err function is called */
 }
 
@@ -137,7 +137,7 @@ static err_t tls_client_recv(void *arg, struct altcp_pcb *pcb, struct pbuf *p, e
     TLS_CLIENT_T *state = (TLS_CLIENT_T *)arg;
     if (!p)
     {
-        printf("TLS: connection closed\n");
+        // printf("TLS: connection closed\n");
         return tls_client_close(state);
     }
 
@@ -163,7 +163,7 @@ static void tls_client_connect_to_server_ip(const ip_addr_t *ipaddr, TLS_CLIENT_
     err_t err;
     u16_t port = 443;
 
-    printf("TLS: connecting to server IP %s port %d\n", ipaddr_ntoa(ipaddr), port);
+    // printf("TLS: connecting to server IP %s port %d\n", ipaddr_ntoa(ipaddr), port);
     err = altcp_connect(state->pcb, ipaddr, port, tls_client_connected);
     if (err != ERR_OK)
     {
@@ -176,12 +176,12 @@ static void tls_client_dns_found(const char *hostname, const ip_addr_t *ipaddr, 
 {
     if (ipaddr)
     {
-        printf("TLS: DNS resolving complete\n");
+        // printf("TLS: DNS resolving complete\n");
         tls_client_connect_to_server_ip(ipaddr, (TLS_CLIENT_T *)arg);
     }
     else
     {
-        printf("TLS: error resolving hostname %s\n", hostname);
+        // printf("TLS: error resolving hostname %s\n", hostname);
         tls_client_close(arg);
     }
 }
@@ -195,7 +195,7 @@ bool tls_client_open(void *arg)
     state->pcb = altcp_tls_new(tls_config, IPADDR_TYPE_ANY);
     if (!state->pcb)
     {
-        printf("TLS: failed to create pcb\n");
+        // printf("TLS: failed to create pcb\n");
         return false;
     }
 
@@ -207,7 +207,7 @@ bool tls_client_open(void *arg)
     /* Set SNI */
     mbedtls_ssl_set_hostname(altcp_tls_context(state->pcb), state->hostname);
 
-    printf("TLS: resolving %s\n", state->hostname);
+    // printf("TLS: resolving %s\n", state->hostname);
 
     // cyw43_arch_lwip_begin/end should be used around calls into lwIP to ensure correct locking.
     // You can omit them if you are in a callback from lwIP. Note that when using pico_cyw_arch_poll
@@ -223,7 +223,7 @@ bool tls_client_open(void *arg)
     }
     else if (err != ERR_INPROGRESS)
     {
-        printf("TLS: error initiating DNS resolving, err=%d\n", err);
+        // printf("TLS: error initiating DNS resolving, err=%d\n", err);
         tls_client_close(state->pcb);
     }
 
@@ -238,7 +238,7 @@ TLS_CLIENT_T *tls_client_init(void)
     TLS_CLIENT_T *state = calloc(1, sizeof(TLS_CLIENT_T));
     if (!state)
     {
-        printf("TLS: failed to allocate state\n");
+        // printf("TLS: failed to allocate state\n");
         return NULL;
     }
 
@@ -270,14 +270,14 @@ bool altcp_tls_setup_cyw43(char *ssid, char *password, uint timeout)
 {
     if (cyw43_arch_init())
     {
-        printf("TLS: failed to initialise\n");
+        // printf("TLS: failed to initialise\n");
         return false;
     }
     cyw43_arch_enable_sta_mode();
 
     if (cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, timeout))
     {
-        printf("TLS: failed to connect\n");
+        // printf("TLS: failed to connect\n");
         return false;
     }
 
