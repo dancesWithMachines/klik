@@ -41,7 +41,7 @@ static char g_request[REQUEST_API_FORM_MAX_LEN + 1];
  * @param value         value to be set.
  * @return char*        Request string.
  */
-char *prepareRequest(requestType_t type, char *apiUsername, char *apiFeedName, char *apiKey, uint8_t value)
+char *prepareRequest(requestType_t type, char *apiUsername, char *apiFeedName, char *apiKey, int8_t value)
 {
     static char typeString[REQUEST_PREPARE_TYPE_STRING_LEN + 1];
     static char valueString[REQUEST_PREPARE_VALUE_STRING_LEN + 1];
@@ -129,7 +129,7 @@ char *requestPrepareGET(char *apiUsername, char *apiFeedName, char *apiKey)
  * @param apiKey      api key.
  * @return char*      Http GET request string.
  */
-char *requestPreparePOST(uint8_t value, char *apiUsername, char *apiFeedName, char *apiKey)
+char *requestPreparePOST(int8_t value, char *apiUsername, char *apiFeedName, char *apiKey)
 {
     return prepareRequest(REQUEST_POST, apiUsername, apiFeedName, apiKey, value);
 }

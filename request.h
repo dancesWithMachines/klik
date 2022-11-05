@@ -22,7 +22,7 @@ typedef enum
 
 bool requestSetup(char *ssid, char *password);
 char *requestPrepareGET(char *apiUsername, char *apiFeedName, char *apiKey);
-char *requestPreparePOST(uint8_t value, char *apiUsername, char *apiFeedName, char *apiKey);
+char *requestPreparePOST(int8_t value, char *apiUsername, char *apiFeedName, char *apiKey);
 char *requestSend(char *request);
 void requestDestroy();
 
