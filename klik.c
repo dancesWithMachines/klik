@@ -19,7 +19,10 @@
 #define SERVO_PIN 21
 
 #define RESPONSE_VALUE_STRING "\"value\":\""
+
 #define TAP_BREAK_TIME 500
+#define BREAK_TIME 1000
+#define TIME_STEP 100
 
 typedef enum
 {
@@ -150,7 +153,7 @@ void servoTap(uint8_t count, uint8_t maxAngle)
 int main()
 {
     config_t config;
-    char *request, *response;
+    char *request, *response, *configLine;
     int8_t responseValue;
 
     stdio_init_all();
@@ -162,8 +165,8 @@ int main()
     diodeSetState(KLIK_STATE_SETUP);
     configLoad(&config);
     configApplyDefaults(false);
-    serialInit();
-    serialSetInterruptHandler(configHandler);
+    serialUartInit();
+    serialUartSetInterruptHandler(configUartInterruptHandler);
     servoSetup(SERVO_PIN);
     buttonSet(BUTTON_PIN);
 
@@ -200,7 +203,7 @@ int main()
      * At this phrase everything should be working.
      */
 
-    while (1)
+    while (true)
     {
         request = requestPrepareGET(config.username, config.feedName, config.apiKey);
         response = requestSend(request);
@@ -239,7 +242,19 @@ int main()
             break;
         }
 
-        sleep_ms(1000);
+        /*
+         * This is my lazy workaround to non existing usb serial interrupt.
+         * We do not want to spam API asap either, thus the sleep.
+         */
+
+        for (int i = 0; i < BREAK_TIME / TIME_STEP; i++)
+        {
+            configLine = serialUsbGetLastLine();
+            if (configLine)
+                configHandler(configLine);
+
+            sleep_ms(TIME_STEP);
+        }
     }
 
     /*

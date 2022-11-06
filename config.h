@@ -35,9 +35,10 @@ typedef struct
     char message[CONFIG_STRUCT_LEFT_SPACE];
 } config_t;
 
+void configHandler(char *string);
+void configUartInterruptHandler();
 void configLoad(config_t *config);
 void configSave(config_t *config);
 bool configApplyDefaults(bool force);
-void configHandler();
 
 #endif

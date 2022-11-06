@@ -7,6 +7,7 @@ Before release:
 
 Improvements:
     * Replace some of the "Init" functions with "Setup"
+    * Disable lwip printing to uart/serial
 
 Ideas:
     * Add config args to cmake, similar to how it's done in pico-examples (for pico w)

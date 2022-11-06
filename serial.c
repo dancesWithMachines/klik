@@ -13,9 +13,9 @@
 #define SERIAL_PARITY 0
 
 /**
- * @brief Initiates and setups serial communication.
+ * @brief Initiates and setups serial communication for uart.
  */
-void serialInit()
+void serialUartInit()
 {
     uart_init(SERIAL_UART_ID, SERIAL_BAUD_RATE);
     uart_set_format(SERIAL_UART_ID, SERIAL_DATA_BITS, SERIAL_STOP_BITS, SERIAL_PARITY);
@@ -24,11 +24,11 @@ void serialInit()
 }
 
 /**
- * @brief Gets last full line from serial.
+ * @brief Gets last full line from uart.
  *
- * @return char* Last full line from serial, or 0 when empty.
+ * @return char* Last full line from uart, or 0 when empty.
  */
-char *serialGetLastLine()
+char *serialUartGetLastLine()
 {
     static char income[SERIAL_MAX_INCOME_LEN];
     static uint16_t incomeIndex;
@@ -48,11 +48,47 @@ char *serialGetLastLine()
         {
             income[incomeIndex] = 0;
             incomeIndex = 0;
+
             return income;
         }
+
         income[incomeIndex] = symbol;
         incomeIndex++;
     }
+    return 0;
+}
+
+char *serialUsbGetLastLine()
+{
+    static char income[SERIAL_MAX_INCOME_LEN];
+    static uint16_t incomeIndex;
+    char symbol;
+
+    if (!income[0])
+        incomeIndex = 0;
+
+    if (!incomeIndex)
+        memset(income, 0, sizeof income);
+
+    while (true)
+    {
+        symbol = getchar_timeout_us(0);
+
+        if (symbol == 255)
+            break;
+
+        if (symbol == '\n' || symbol == '\r' || (incomeIndex > SERIAL_MAX_INCOME_LEN - 1))
+        {
+            income[incomeIndex] = 0;
+            incomeIndex = 0;
+
+            return income;
+        }
+
+        income[incomeIndex] = symbol;
+        incomeIndex++;
+    }
+
     return 0;
 }
 
@@ -62,9 +98,9 @@ char *serialGetLastLine()
  *
  * @param line      text to print.
  * @return true     printing succeeded.
- * @return false    printing failed, no serial available.
+ * @return false    printing failed, uart unavailable.
  */
-bool serialSendLine(char *line)
+bool serialUartSendLine(char *line)
 {
     if (uart_is_writable(SERIAL_UART_ID))
     {
@@ -75,11 +111,11 @@ bool serialSendLine(char *line)
 }
 
 /**
- * @brief Sets interrupt on serial activity with handler function.
+ * @brief Sets interrupt on uart activity with handler function.
  *
  * @param handlerFunction handler function.
  */
-void serialSetInterruptHandler(void *handlerFunction)
+void serialUartSetInterruptHandler(void *handlerFunction)
 {
     static int UART_IRQ = SERIAL_UART_ID == uart0 ? UART0_IRQ : UART1_IRQ;
 

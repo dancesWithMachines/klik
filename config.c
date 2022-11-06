@@ -133,6 +133,157 @@ char *getValue(char *string)
 }
 
 /**
+ * @brief Handles "Get" configuration mode.
+ *        "Get" mode is used to print current settings on serial.
+ * @param string configuration setting.
+ */
+void modeGetHandler(char *string)
+{
+    config_t config;
+    configLoad(&config);
+
+    switch (getSetting(string))
+    {
+    case SETTING_SSID:
+        printf("%s\n", config.ssid);
+        break;
+    case SETTING_PASSWORD:
+        printf("%s\n", config.password);
+        break;
+    case SETTING_USERNAME:
+        printf("%s\n", config.username);
+        break;
+    case SETTING_FEED_NAME:
+        printf("%s\n", config.feedName);
+        break;
+    case SETTING_API_KEY:
+        printf("%s\n", config.apiKey);
+        break;
+    case SETTING_ANGLE_MAX:
+        printf("%d\n", config.angleMax);
+        break;
+    case SETTING_MESSAGE:
+        printf("%s\n", config.message);
+        break;
+    case SETTING_ALL:
+        printf("SSID: %s\n"
+               "PASSWORD: %s\n"
+               "USERNAME: %s\n"
+               "FEED NAME: %s\n"
+               "API_KEY: %s\n"
+               "MAX ANGLE: %d\n"
+               "MESSAGE:%s\n",
+               config.ssid,
+               config.password,
+               config.username,
+               config.feedName,
+               config.apiKey,
+               config.angleMax,
+               config.message);
+        break;
+    case SETTING_UNDEFINED:
+        printf("%s\n", CONFIG_MESSAGE_SETTING_UNSUPPORTED);
+        break;
+    default:
+        printf("%s\n", CONFIG_MESSAGE_SETTING_UNSUPPORTED);
+        break;
+    }
+}
+
+/**
+ * @brief Handles "Set" configuration mode.
+ *        "Set" mode is used to overwrite current settings.
+ *        Function sets configuration setting based on string, an (re)writes configuration to onboard flash.
+ * @param string configuration string.
+ */
+void modeSetHandler(char *string)
+{
+    char *value = getValue(string);
+    static uint8_t valueLength;
+    static config_t config;
+
+    valueLength = strlen(value);
+    configLoad(&config);
+    switch (getSetting(string))
+    {
+    case SETTING_SSID:
+        memset(config.ssid, 0, sizeof config.ssid);
+        strncpy(config.ssid, value, REQUEST_NET_SSID_LEN);
+        break;
+    case SETTING_PASSWORD:
+        memset(config.password, 0, sizeof config.password);
+        strncpy(config.password, value, REQUEST_NET_PASS_LEN);
+        break;
+    case SETTING_USERNAME:
+        memset(config.username, 0, sizeof config.username);
+        strncpy(config.username, value, REQUEST_API_USERNAME_LEN);
+        break;
+    case SETTING_FEED_NAME:
+        memset(config.feedName, 0, sizeof config.feedName);
+        strncpy(config.feedName, value, REQUEST_API_FEED_NAME_LEN);
+        break;
+    case SETTING_API_KEY:
+        memset(config.apiKey, 0, sizeof config.apiKey);
+        strncpy(config.apiKey, value, REQUEST_API_KEY_LEN);
+        break;
+    case SETTING_ANGLE_MAX:
+        config.angleMax = atoi(value);
+        if (config.angleMax > SERVO_MAX_ANGLE)
+            config.angleMax = SERVO_MAX_ANGLE;
+        break;
+    case SETTING_MESSAGE:
+        memset(config.message, 0, sizeof config.message);
+        strncpy(config.message, value, CONFIG_STRUCT_LEFT_SPACE - 1); // This one is different
+        break;
+    case SETTING_ALL: // Yes, I could skip the contents
+        printf("%s\n", CONFIG_MESSAGE_SETTING_UNSUPPORTED);
+        return;
+    case SETTING_UNDEFINED:
+        printf("%s\n", CONFIG_MESSAGE_SETTING_UNSUPPORTED);
+        return;
+    }
+
+    configSave(&config);
+    printf("%s\n", CONFIG_MESSAGE_SUCCESS);
+}
+
+/**
+ * @brief Handles device configuration standalone.
+ *
+ * @param string configuration string.
+ */
+void configHandler(char *string)
+{
+    switch (getMode(string))
+    {
+    case CONFIG_MODE_GET:
+        modeGetHandler(string);
+        break;
+    case CONFIG_MODE_SET:
+        modeSetHandler(string);
+        break;
+    case CONFIG_MODE_RESET:
+        configApplyDefaults(true);
+        break;
+    case CONFIG_MODE_UNSUPPORTED:
+        printf("%s\n", CONFIG_MESSAGE_MODE_UNSUPPORTED);
+        break;
+    }
+}
+
+/**
+ * @brief Handles device configuration over UART (ONLY)!
+ *        The function was designed to be run by uart interrupts.
+ */
+void configUartInterruptHandler()
+{
+    char *string = serialUartGetLastLine();
+    if (!string)
+        return;
+    configHandler(string);
+}
+
+/**
  * @brief Loads configuration from flash.
  *
  * @param config configuration to write to.
@@ -198,145 +349,4 @@ bool configApplyDefaults(bool force)
         printf("%s\n", CONFIG_MESSAGE_SUCCESS);
 
     return true;
-}
-
-/**
- * @brief Handles "Get" configuration mode.
- *        "Get" mode is used to print current settings on serial.
- * @param string configuration setting.
- */
-void configModeGetHandler(char *string)
-{
-    config_t config;
-    configLoad(&config);
-
-    switch (getSetting(string))
-    {
-    case SETTING_SSID:
-        printf("%s\n", config.ssid);
-        break;
-    case SETTING_PASSWORD:
-        printf("%s\n", config.password);
-        break;
-    case SETTING_USERNAME:
-        printf("%s\n", config.username);
-        break;
-    case SETTING_FEED_NAME:
-        printf("%s\n", config.feedName);
-        break;
-    case SETTING_API_KEY:
-        printf("%s\n", config.apiKey);
-        break;
-    case SETTING_ANGLE_MAX:
-        printf("%d\n", config.angleMax);
-        break;
-    case SETTING_MESSAGE:
-        printf("%s\n", config.message);
-        break;
-    case SETTING_ALL:
-        printf("SSID: %s\n"
-               "PASSWORD: %s\n"
-               "USERNAME: %s\n"
-               "FEED NAME: %s\n"
-               "API_KEY: %s\n"
-               "MAX ANGLE: %d\n"
-               "MESSAGE:%s\n",
-               config.ssid,
-               config.password,
-               config.username,
-               config.feedName,
-               config.apiKey,
-               config.angleMax,
-               config.message);
-        break;
-    case SETTING_UNDEFINED:
-        printf("%s\n", CONFIG_MESSAGE_SETTING_UNSUPPORTED);
-        break;
-    default:
-        printf("%s\n", CONFIG_MESSAGE_SETTING_UNSUPPORTED);
-        break;
-    }
-}
-
-/**
- * @brief Handles "Set" configuration mode.
- *        "Set" mode is used to overwrite current settings.
- *        Function sets configuration setting based on string, an (re)writes configuration to onboard flash.
- * @param string configuration string.
- */
-void configModeSetHandler(char *string)
-{
-    char *value = getValue(string);
-    static uint8_t valueLength;
-    static config_t config;
-
-    valueLength = strlen(value);
-    configLoad(&config);
-    switch (getSetting(string))
-    {
-    case SETTING_SSID:
-        memset(config.ssid, 0, sizeof config.ssid);
-        strncpy(config.ssid, value, REQUEST_NET_SSID_LEN);
-        break;
-    case SETTING_PASSWORD:
-        memset(config.password, 0, sizeof config.password);
-        strncpy(config.password, value, REQUEST_NET_PASS_LEN);
-        break;
-    case SETTING_USERNAME:
-        memset(config.username, 0, sizeof config.username);
-        strncpy(config.username, value, REQUEST_API_USERNAME_LEN);
-        break;
-    case SETTING_FEED_NAME:
-        memset(config.feedName, 0, sizeof config.feedName);
-        strncpy(config.feedName, value, REQUEST_API_FEED_NAME_LEN);
-        break;
-    case SETTING_API_KEY:
-        memset(config.apiKey, 0, sizeof config.apiKey);
-        strncpy(config.apiKey, value, REQUEST_API_KEY_LEN);
-        break;
-    case SETTING_ANGLE_MAX:
-        config.angleMax = atoi(value);
-        if (config.angleMax > SERVO_MAX_ANGLE)
-            config.angleMax = SERVO_MAX_ANGLE;
-        break;
-    case SETTING_MESSAGE:
-        memset(config.message, 0, sizeof config.message);
-        strncpy(config.message, value, CONFIG_STRUCT_LEFT_SPACE - 1); // This one is different
-        break;
-    case SETTING_ALL: // Yes, I could skip the contents
-        serialSendLine(CONFIG_MESSAGE_SETTING_UNSUPPORTED);
-        return;
-    case SETTING_UNDEFINED:
-        serialSendLine(CONFIG_MESSAGE_SETTING_UNSUPPORTED);
-        return;
-    }
-
-    configSave(&config);
-    printf("%s\n", CONFIG_MESSAGE_SUCCESS);
-}
-
-/**
- * @brief Handles device configuration, standalone.
- *        Might be called by serial interrupts, or be a part of loop.
- */
-void configHandler()
-{
-    char *string = serialGetLastLine();
-    if (!string)
-        return;
-    switch (getMode(string))
-    {
-    case CONFIG_MODE_GET:
-        configModeGetHandler(string);
-        break;
-    case CONFIG_MODE_SET:
-        configModeSetHandler(string);
-        break;
-    case CONFIG_MODE_RESET:
-        configApplyDefaults(true);
-        break;
-    case CONFIG_MODE_UNSUPPORTED:
-        printf("%s\n", CONFIG_MESSAGE_MODE_UNSUPPORTED);
-        break;
-    }
 }
