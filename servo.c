@@ -1,3 +1,13 @@
+/*
+ * File: servo.c
+ * Project: Klik
+ * -----
+ * This source code is released under BSD-3 license.
+ * Check LICENSE file for full list of conditions and disclaimer.
+ * -----
+ * Copyright 2022 - 2022 M.Kusiak (timax)
+ */
+
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"

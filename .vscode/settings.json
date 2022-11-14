@@ -1,6 +1,5 @@
-
 {
-	"cmake.configureArgs": [
+    "cmake.configureArgs": [
         "-DPICO_BOARD=pico_w"
     ],
     "cortex-debug.openocdPath": "/Users/timax/Development/pi_pico/openocd/src/openocd",
@@ -9,5 +8,36 @@
         "stdlib.h": "c",
         "serial.h": "c",
         "dictionary.h": "c"
-    }
+    },
+    "psi-header.config": {
+        "blankLinesAfter": 1
+    },
+    "psi-header.variables": [
+        [
+            "projectCreationYear",
+            "2022"
+        ],
+        [
+            "copyrightholder",
+            "M.Kusiak (timax)"
+        ],
+        [
+            "projectname",
+            "Klik"
+        ]
+    ],
+    "psi-header.templates": [
+        {
+            "language": "*",
+            "template": [
+                "File: <<filename>>",
+                "Project: <<projectname>>",
+                "-----",
+                "This source code is released under BSD-3 license.",
+                "Check LICENSE file for full list of conditions and disclaimer.",
+                "-----",
+                "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>"
+            ]
+        }
+    ]
 }

@@ -1,3 +1,13 @@
+/*
+ * File: led.h
+ * Project: Klik
+ * -----
+ * This source code is released under BSD-3 license.
+ * Check LICENSE file for full list of conditions and disclaimer.
+ * -----
+ * Copyright 2022 - 2022 M.Kusiak (timax)
+ */
+
 #ifndef LED_H
 #define LED_H
 
