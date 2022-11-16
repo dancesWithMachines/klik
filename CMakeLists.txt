@@ -21,7 +21,7 @@ aux_source_directory(. PROJECT_SOURCES)
 
 aux_source_directory(./libs/picow_tls_client PICO_TLS_CLIENT)
 
-# Add executable. Default name is the project name, version 0.1
+# Add executable. Default name is the project name
 add_executable(klik klik.c ${PROJECT_SOURCES} ${PICO_TLS_CLIENT})
 
 target_include_directories(klik PRIVATE
@@ -29,7 +29,7 @@ target_include_directories(klik PRIVATE
     )
 
 pico_set_program_name(klik "klik")
-pico_set_program_version(klik "0.1")
+pico_set_program_version(klik "1.0")
 
 pico_enable_stdio_uart(klik 1)
 pico_enable_stdio_usb(klik 1)
