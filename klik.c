@@ -32,7 +32,6 @@
 
 #define TAP_BREAK_TIME 500
 #define BREAK_TIME 1000
-#define TIME_STEP 100
 
 typedef enum
 {
@@ -158,12 +157,24 @@ void servoTap(uint8_t count, uint8_t maxAngle)
 }
 
 /**
+ * @brief Updates config if data present on usb serial.
+ * There's no USB serial interrupt, so it must be called manually.
+ */
+void usbSerialUpdateConfig()
+{
+    char *configLine = serialUsbGetLastLine();
+
+    if (configLine)
+        configHandler(configLine);
+}
+
+/**
  * @brief main(), lol.
  */
 int main()
 {
     config_t config;
-    char *request, *response, *configLine;
+    char *request, *response;
     int8_t responseValue;
 
     stdio_init_all();
@@ -252,19 +263,8 @@ int main()
             break;
         }
 
-        /*
-         * This is my lazy workaround to non existing usb serial interrupt.
-         * We do not want to spam API asap either, thus the sleep.
-         */
-
-        for (int i = 0; i < BREAK_TIME / TIME_STEP; i++)
-        {
-            configLine = serialUsbGetLastLine();
-            if (configLine)
-                configHandler(configLine);
-
-            sleep_ms(TIME_STEP);
-        }
+        usbSerialUpdateConfig();
+        sleep_ms(BREAK_TIME);
     }
 
     /*
@@ -276,7 +276,8 @@ int main()
 error:
     while (1)
     {
-        tight_loop_contents();
+        usbSerialUpdateConfig();
+        sleep_ms(BREAK_TIME);
     }
 
     return 0;

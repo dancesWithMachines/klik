@@ -29,7 +29,7 @@ target_include_directories(klik PRIVATE
     )
 
 pico_set_program_name(klik "klik")
-pico_set_program_version(klik "1.0")
+pico_set_program_version(klik "1.1")
 
 pico_enable_stdio_uart(klik 1)
 pico_enable_stdio_usb(klik 1)
