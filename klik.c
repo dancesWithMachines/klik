@@ -274,9 +274,16 @@ int main()
      */
 
 error:
+    responseValue = KLIK_MODE_OFF;
+
     while (1)
     {
         usbSerialUpdateConfig();
+
+        if (buttonReadState(BUTTON_PIN))
+            responseValue = !responseValue;
+
+        moveServoByValue(responseValue, config.angleMax);
         sleep_ms(BREAK_TIME);
     }
 
