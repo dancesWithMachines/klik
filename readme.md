@@ -1,5 +1,5 @@
 # Introduction
-This is the repository for Klik firmware. Go to [wiki section](https://github.com/dancesWithMachines/klik/wiki) of this repository to learn about Klik, or jump straight into [docs / guide](https://danceswithmachines.github.io/klik).
+This is the repository for Klik firmware. Go to [wiki section](https://github.com/dancesWithMachines/klik/wiki) of this repository to learn about Klik, or jump straight into [docs / guide](https://danceswithmachines.github.io/posts/klik/).
 
 # Binaries
 You can directly download newest binary file from releases section.
